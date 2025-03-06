@@ -19,13 +19,9 @@ public class Main {
         userService.saveUser("Name3", "Lastname3", (byte) 33);
         System.out.println("User с именем Name3 добавлен в базу данных");
 
-        System.out.println("\nВсе пользователи в базе:");
         userService.getAllUsers().forEach(System.out::println);
 
         userService.cleanUsersTable();
-        System.out.println("\nТаблица очищена");
-
         userService.dropUsersTable();
-        System.out.println("Таблица удалена");
     }
 }
