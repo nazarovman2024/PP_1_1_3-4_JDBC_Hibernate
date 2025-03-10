@@ -10,14 +10,13 @@ import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
     private final SessionFactory sessionFactory;
+    private Transaction transaction;
 
     public UserDaoHibernateImpl() {
         this.sessionFactory = Util.getSessionFactory();
     }
 
     private void query(String sql, String todo) {
-        Transaction transaction = null;
-
         try (Session session = sessionFactory.getCurrentSession()) {
             transaction = session.beginTransaction();
             session.createNativeQuery(sql).executeUpdate();
@@ -26,7 +25,6 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-
             throw new RuntimeException("Failed to " + todo, e);
         }
     }
@@ -48,8 +46,6 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        Transaction transaction = null;
-
         try (Session session = sessionFactory.getCurrentSession()) {
             transaction = session.beginTransaction();
             User user = new User(name, lastName, age);
@@ -59,15 +55,12 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-
             throw new RuntimeException("Failed to save user", e);
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        Transaction transaction = null;
-
         try (Session session = sessionFactory.getCurrentSession()) {
             transaction = session.beginTransaction();
             User user = session.get(User.class, id);
@@ -79,15 +72,12 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-
             throw new RuntimeException("Failed to remove user", e);
         }
     }
 
     @Override
     public List<User> getAllUsers() {
-        Transaction transaction = null;
-
         try (Session session = sessionFactory.getCurrentSession()) {
             transaction = session.beginTransaction();
             List<User> allUsers = session.createQuery("FROM User", User.class).list();
@@ -97,7 +87,6 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-
             throw new RuntimeException("Failed to get all users", e);
         }
     }
